@@ -1,5 +1,5 @@
-INSERT INTO USUARIOS(username, password, enabled, name, surname, email) VALUES ('vortice', 'admin', true, 'Victor', 'Bedmar', 'v.y.bedmar@gmail.com');
-INSERT INTO USUARIOS(username, password, enabled, name, surname, email) VALUES ('jules', 'abc', true, 'Julio', 'Zapata', 'j.zapata@gmail.com');
+INSERT INTO USUARIOS(username, password, enabled, name, surname, email) VALUES ('vortice', '$2a$10$9k757yHVdFDpzNgaeEnZTetwIo4OLwfd9k.7t/oOoLIWOla0ybKi6', true, 'Victor', 'Bedmar', 'v.y.bedmar@gmail.com');
+INSERT INTO USUARIOS(username, password, enabled, name, surname, email) VALUES ('jules', '$2a$10$BIioe18A5jLJ5WaWyBKZaOFn/4V2lETfBTH2Kc7INph/TiKJADRkC', true, 'Julio', 'Zapata', 'j.zapata@gmail.com');
 
 INSERT INTO ROLES(name) VALUES('ROLE_USER');
 INSERT INTO ROLES(name) VALUES('ROLE_ADMIN');
