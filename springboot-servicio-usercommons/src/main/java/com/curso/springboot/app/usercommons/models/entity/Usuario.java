@@ -34,16 +34,17 @@ public class Usuario implements Serializable {
 	private String name;
 
 	private String surname;
-	
+
 	@Column(unique = true, length = 100)
 	private String email;
-	
+
 	@ManyToMany(fetch = FetchType.LAZY)
-	@JoinTable(name="users_to_roles", joinColumns =  @JoinColumn(name="user_id"), inverseJoinColumns = @JoinColumn(name="role_id"),
-	uniqueConstraints = {@UniqueConstraint(columnNames = {"user_id", "role_id"})})
+	@JoinTable(name = "users_to_roles", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "role_id"), uniqueConstraints = {
+			@UniqueConstraint(columnNames = { "user_id", "role_id" }) })
 	private List<Role> roles;
 
-	
+	private Integer intentos;
+
 	public List<Role> getRoles() {
 		return roles;
 	}
@@ -109,5 +110,17 @@ public class Usuario implements Serializable {
 	}
 
 	private static final long serialVersionUID = 3123510211774555298L;
+
+	public Integer getIntentos() {
+		return intentos;
+	}
+
+	public void setIntentos(Integer intentos) {
+		this.intentos = intentos;
+	}
+
+	public void setEnabled(boolean enabled) {
+		this.enabled = enabled;
+	}
 
 }
