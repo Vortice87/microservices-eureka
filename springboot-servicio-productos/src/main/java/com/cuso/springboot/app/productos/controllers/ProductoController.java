@@ -1,8 +1,10 @@
 package com.cuso.springboot.app.productos.controllers;
 
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -18,7 +20,7 @@ import com.cuso.springboot.app.productos.models.service.IProductoService;
 
 @RestController
 public class ProductoController {
-	
+		
 	@Autowired
 	private IProductoService productoService;
 	
@@ -28,12 +30,14 @@ public class ProductoController {
 	}
 	
 	@GetMapping("/ver/{id}")
-	public Producto detalle(@PathVariable Long id) {
-//		try {
-//			Thread.sleep(2000L);
-//		} catch (InterruptedException e) {
-//			e.printStackTrace();
-//		}
+	public Producto detalle(@PathVariable Long id) throws InterruptedException {
+		
+		if(id.equals(10L)) {
+			throw new IllegalStateException("Producto no encontratdo");
+		}
+		if(id.equals(7L)) {
+			TimeUnit.SECONDS.sleep(5L);
+		}
 		return productoService.findById(id);
 	}
 	

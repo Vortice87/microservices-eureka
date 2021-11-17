@@ -10,6 +10,7 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 
 @Entity
 @Table(name="productos")
@@ -22,7 +23,7 @@ public class Producto implements Serializable{
 	private String nombre;
 	
 	private Double precio;
-	
+		
 	@Temporal(TemporalType.DATE)
 	private Date fechaCreacion;
 	

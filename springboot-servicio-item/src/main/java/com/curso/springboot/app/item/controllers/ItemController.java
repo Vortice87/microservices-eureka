@@ -4,9 +4,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cloud.client.circuitbreaker.CircuitBreakerFactory;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
@@ -25,18 +28,22 @@ import org.springframework.web.bind.annotation.RestController;
 import com.curso.springboot.app.item.models.Item;
 import com.curso.springboot.app.commos.model.entity.Producto;
 import com.curso.springboot.app.item.models.service.ItemService;
-import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
 
 @RefreshScope
 @RestController					
 public class ItemController {
 	
+	private final Logger logger = LoggerFactory.getLogger(ItemController.class);
+	
+	@Autowired
+	private CircuitBreakerFactory cbFactory;
+		
 	@Autowired
 	@Qualifier("serviceFeign")
 	private ItemService itemService;
 	
-	@Value("${configuracion.texto}")
-	private String texto;
+	//@Value("${configuracion.texto}")
+	//private String texto;
 	
 	@Autowired
 	private Environment env;
@@ -48,18 +55,21 @@ public class ItemController {
 		return itemService.findAll();
 	}
 	
-	@HystrixCommand(fallbackMethod = "metodoAlternativo")
+	//@HystrixCommand(fallbackMethod = "metodoAlternativo")
 	@GetMapping("/ver/{id}/{cantidad}")
 	public Item detalle(@PathVariable Long id, @PathVariable Integer cantidad) {
-		return itemService.findById(id, cantidad);
+		return cbFactory.create("items")
+				.run(() -> itemService.findById(id, cantidad)/*, e -> metodoAlternativo(id, cantidad, e)*/);
 	}
 	
-	public Item metodoAlternativo(Long id, Integer cantidad) {
+	public Item metodoAlternativo(Long id, Integer cantidad, Throwable e) {
+		
+		logger.info(e.getMessage());
 		Item item = new Item();
 		Producto producto = new Producto();
 		item.setCantidad(cantidad);
 		producto.setId(id);
-		producto.setNombre("Camara Sony");
+		producto.setNombre(e.getMessage());
 		producto.setPrecio(500.00);
 		item.setProducto(producto);
 		return item;
@@ -68,7 +78,7 @@ public class ItemController {
 	@GetMapping("/obtener-config")
 	public ResponseEntity<?> obtenerConfig(){
 		Map<String, String> json = new HashMap<>();
-		json.put("texto", texto);
+		//json.put("texto", texto);
 		if(env.getActiveProfiles().length > 0 && env.getActiveProfiles()[0].equals("dev")) {
 			json.put("autor", env.getProperty("configuracion.autor.nombre"));
 			json.put("email", env.getProperty("configuracion.autor.email"));
